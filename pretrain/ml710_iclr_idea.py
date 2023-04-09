@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import math
 import sys
 import time
@@ -8,6 +8,7 @@ import random
 import numpy as np
 import os
 import wandb
+from tqdm import tqdm
 
 import torch
 from torch.nn.parallel import DistributedDataParallel
@@ -19,11 +20,12 @@ from decoder import LightDecoder
 from models import build_sparse_encoder
 from sampler import DistInfiniteBatchSampler, worker_init_fn
 from spark import SparK
-from utils import arg_util, misc, lamb
+from utils import misc, lamb
 from utils.imagenet import build_imagenet_pretrain
 from utils.lr_control import lr_wd_annealing, get_param_groups
 
-sys.path.append("../SparK")
+sys.path.append("../ML710-Project")
+sys.path.append("../ML710-Project/model_and_hyperpam")
 
 from model_and_hyperpam import (
     SEED,
@@ -38,7 +40,8 @@ from model_and_hyperpam import (
 
 from dataset.pretrain_dataset import train_datasets
 
-
+if not torch.cuda.is_available():
+    raise RuntimeError('CUDA is not available')
 
 torch.cuda.manual_seed(SEED)
 torch.cuda.manual_seed_all(SEED)
@@ -64,12 +67,12 @@ opt_clz = {
 
 optimizer = opt_clz(params=param_groups, lr=2e-4*BATCH_SIZE/256, weight_decay=0.0)
 
-print(f'Optimizer: {optimizer}')
-
 def pre_train_epochs(num_epochs, itrt_train, iters_train, model, optimizer, device):
     model = model.to(device)
+    wandb.login(key=WANDB_API)
+    run = wandb.init(project='ml710_project', entity='arcticfox', name='pretrain_ourdata'+'_'+'resnet50'+'_'+datetime.now().strftime('%Y%m%d_%H%M%S'), job_type="training",reinit=True)
     
-    for ep in range(num_epochs):
+    for ep in tqdm(range(num_epochs)):
         model.train()
         me = misc.MetricLogger(delimiter='  ')
         me.add_meter('max_lr', misc.SmoothedValue(window_size=1, fmt='{value:.5f}'))
@@ -93,9 +96,6 @@ def pre_train_epochs(num_epochs, itrt_train, iters_train, model, optimizer, devi
             optimizer.zero_grad()
             loss.backward()
             loss = loss.item()
-
-            wandb.login(key=WANDB_API)
-            run = wandb.init(project='ml710_project', entity='arcticfox', name='pretrain_ourdata'+'_'+'resnet50'+'_'+datetime.now().strftime('%Y%m%d_%H%M%S'), job_type="training",reinit=True)
 
             if not math.isfinite(loss):
                 print(f'Loss is {loss}, stopping training!', force=True, flush=True)
@@ -126,9 +126,9 @@ def pre_train_epochs(num_epochs, itrt_train, iters_train, model, optimizer, devi
 
         print(f'Finished training epoch {ep}')
 
+    run.finish()
 
-
-    return {k: meter.global_avg for k, meter in me.meters.items()},model
+    return {k: meter.global_avg for k, meter in me.meters.items()}, model
 
 
 stats,model_without_ddp_new = pre_train_epochs(EPOCHS, itrt_train, iters_train, model=model_without_ddp, optimizer=optimizer, device=device)

@@ -13,14 +13,14 @@ from torch.nn.parallel import DistributedDataParallel
 from torch.utils.data import DataLoader
 
 
-sys.path.append("../SparK/pretrain")
+sys.path.append("../ML710-Project/pretrain")
 import dist
 import encoder
 from decoder import LightDecoder
 from models import build_sparse_encoder
 from sampler import DistInfiniteBatchSampler, worker_init_fn
 from spark import SparK
-from utils import arg_util, misc, lamb
+from utils import misc, lamb
 from utils.imagenet import build_imagenet_pretrain
 from utils.lr_control import lr_wd_annealing, get_param_groups
 
@@ -34,8 +34,8 @@ model_without_ddp = SparK(
     )
 
 BATCH_SIZE = 128
-PATH_DATA = '/home/chong.tian/hc701'
+PATH_DATA = '/home/xiangjian/project'
 SEED = 42
-DEVICE = 1
+DEVICE = 3
 EPOCHS = 1600
 WANDB_API = '8aa455e04a4782e07ec03e938370c9a90f364deb'
