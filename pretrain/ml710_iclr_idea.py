@@ -38,7 +38,7 @@ from model_and_hyperpam import (
 )
 
 
-from dataset.pretrain_dataset import train_datasets
+from dataset.pretrain_dataset_test import train_datasets
 
 if not torch.cuda.is_available():
     raise RuntimeError('CUDA is not available')
@@ -51,6 +51,7 @@ os.environ['PYTHONHASHSEED'] = str(SEED)
 torch.manual_seed(SEED)
 
 device = torch.device(f"cuda:{DEVICE}" if torch.cuda.is_available() else "cpu")
+print('test')
 model_without_ddp = model_without_ddp.to(device)
 
 data_loader_train = DataLoader(dataset=train_datasets, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
