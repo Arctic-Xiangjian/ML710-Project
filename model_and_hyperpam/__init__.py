@@ -33,13 +33,8 @@ model_without_ddp = SparK(
         densify_norm='bn', sbn=True, hierarchy=4,
     )
 
-<<<<<<< HEAD
 BATCH_SIZE = 128
 PATH_DATA = '/home/xiangjian/project'
-=======
-BATCH_SIZE = 1
-PATH_DATA = '/home/chong.tian/hc701'
->>>>>>> 83dd84097d8f0cd70e8ca334771c5cc7f9d3072f
 SEED = 42
 DEVICE = 3
 EPOCHS = 1600

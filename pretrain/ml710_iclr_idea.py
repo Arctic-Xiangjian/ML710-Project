@@ -86,7 +86,7 @@ def pre_train_epochs(num_epochs, itrt_train, iters_train, model, optimizer, devi
             params_req_grad = [p for p in model.parameters() if p.requires_grad]
         # reset iterator every epoch
 
-        for it, (inp, _) in enumerate(data_loader_train):
+        for it, (inp, _) in tqdm(enumerate(data_loader_train)):
             # adjust lr and wd
             min_lr, max_lr, min_wd, max_wd = lr_wd_annealing(optimizer, 2e-4*BATCH_SIZE/256, 0.04, 0.2, it + ep * iters_train, 40 * iters_train, 1600 * iters_train)
 
