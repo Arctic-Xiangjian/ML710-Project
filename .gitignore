@@ -5,3 +5,6 @@ ckpt/
 *.pth
 *.log
 *.txt
+
+wandb/
+

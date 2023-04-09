@@ -33,7 +33,7 @@ model_without_ddp = SparK(
         densify_norm='bn', sbn=True, hierarchy=4,
     )
 
-BATCH_SIZE = 128
+BATCH_SIZE = 1
 PATH_DATA = '/home/chong.tian/hc701'
 SEED = 42
 DEVICE = 1
