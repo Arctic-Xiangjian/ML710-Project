@@ -42,21 +42,25 @@ np.random.seed(SEED)
 os.environ['PYTHONHASHSEED'] = str(SEED)
 torch.manual_seed(SEED)
 
+BATCH_SIZE = BATCH_SIZE //2
+EPOCHS = EPOCHS // 2
+
 model = timm.create_model('vit_large_patch16_224', pretrained=True, num_classes=5)
 
 wandb.login(key=WANDB_API)
 run = wandb.init(project='ml710_project', entity='arcticfox', name='classification'+'_'+'vit'+'_'+datetime.now().strftime('%Y%m%d_%H%M%S'), job_type="training",reinit=True)
 
-train_dataloader = DataLoader(train_datasets, batch_size=BATCH_SIZE, shuffle=True, num_workers=4)
-test_dataloader = DataLoader(test_datasets, batch_size=BATCH_SIZE, shuffle=False, num_workers=4)
+train_dataloader = DataLoader(train_datasets, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
+# test_dataloader = DataLoader(test_datasets, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
 
 
-def train(model, train_loader, optimizer, criterion, epoch):
+def train(model, train_loader, optimizer, criterion, epoch,device=DEVICE):
+    model = model.to(device)
     model.train()
     for ep in tqdm(range(epoch)):
         this_epoch_loss = 0
         for batch_idx, (data, target) in enumerate(train_loader):
-            data, target = data.to(DEVICE), target.to(DEVICE)
+            data, target = data.to(device), target.to(device)
             optimizer.zero_grad()
             output = model(data)
             loss = criterion(output, target)
