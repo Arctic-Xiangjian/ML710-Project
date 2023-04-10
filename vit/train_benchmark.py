@@ -54,6 +54,7 @@ test_dataloader = DataLoader(test_datasets, batch_size=BATCH_SIZE, shuffle=False
 def train(model, train_loader, optimizer, criterion, epoch):
     model.train()
     for ep in tqdm(range(epoch)):
+        this_epoch_loss = 0
         for batch_idx, (data, target) in enumerate(train_loader):
             data, target = data.to(DEVICE), target.to(DEVICE)
             optimizer.zero_grad()
@@ -61,7 +62,9 @@ def train(model, train_loader, optimizer, criterion, epoch):
             loss = criterion(output, target)
             loss.backward()
             optimizer.step()
-        wandb.log({"train_loss": loss.item()})
+            this_epoch_loss += loss.item()
+        this_epoch_loss /= len(train_loader)
+        wandb.log({"train_loss": this_epoch_loss})
     return model
 
 optimizer = optim.AdamW(model.parameters(), lr=0.001)

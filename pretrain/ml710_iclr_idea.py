@@ -84,7 +84,7 @@ def pre_train_epochs(num_epochs, itrt_train, iters_train, model, optimizer, devi
         if early_clipping:
             params_req_grad = [p for p in model.parameters() if p.requires_grad]
         # reset iterator every epoch
-
+        this_epoch_loss = 0
         for it, (inp, _) in tqdm(enumerate(data_loader_train)):
             # adjust lr and wd
             min_lr, max_lr, min_wd, max_wd = lr_wd_annealing(optimizer, 2e-4*BATCH_SIZE/256, 0.04, 0.2, it + ep * iters_train, 40 * iters_train, 1600 * iters_train)
@@ -100,8 +100,7 @@ def pre_train_epochs(num_epochs, itrt_train, iters_train, model, optimizer, devi
             if not math.isfinite(loss):
                 print(f'Loss is {loss}, stopping training!', force=True, flush=True)
                 sys.exit(-1)
-            if it % 500 == 0:
-                wandb.log({"loss": loss})
+            this_epoch_loss += loss
 
             # optimize
             grad_norm = None
@@ -123,7 +122,8 @@ def pre_train_epochs(num_epochs, itrt_train, iters_train, model, optimizer, devi
             #     me.update(orig_norm=grad_norm)
             #     tb_lg.update(orig_norm=grad_norm, head='train_hp')
             # tb_lg.set_step()
-
+        this_epoch_loss /= len(data_loader_train)
+        wandb.log({"loss": this_epoch_loss})
         print(f'Finished training epoch {ep}')
 
     run.finish()
