@@ -29,7 +29,7 @@ from model_and_hyperpam import (
     WANDB_API,
 )
 
-model = timm.create_model('vit_huge_patch16_224', pretrained=True, num_classes=5)
+model = timm.create_model('vit_large_patch16_224', pretrained=True, num_classes=5)
 
 wandb.login(key=WANDB_API)
 run = wandb.init(project='ml710_project', entity='arcticfox', name='classification'+'_'+'vit'+'_'+datetime.now().strftime('%Y%m%d_%H%M%S'), job_type="training",reinit=True)
