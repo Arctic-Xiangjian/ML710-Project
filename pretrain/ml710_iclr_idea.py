@@ -30,7 +30,6 @@ sys.path.append("../ML710-Project/model_and_hyperpam")
 from model_and_hyperpam import (
     SEED,
     BATCH_SIZE,
-    PATH_DATA,
     DEVICE,
     EPOCHS,
     WANDB_API,
