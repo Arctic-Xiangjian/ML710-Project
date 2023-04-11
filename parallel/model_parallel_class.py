@@ -10,7 +10,7 @@ class ViTModelParallel(nn.Module):
 
         self.model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
 
-        # 将部分层分配到不同的设备
+        # move the different parts of the model to different devices
         self.model.patch_embed = self.model.patch_embed.to(device_ids[0])
         self.model.pos_drop = self.model.pos_drop.to(device_ids[0])
 
