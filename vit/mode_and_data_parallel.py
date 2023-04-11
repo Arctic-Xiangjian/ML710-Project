@@ -58,7 +58,7 @@ model_parallel_group2 = ViTModel_Data_Parallel(model_name, num_classes, device_g
 wandb.login(key=WANDB_API)
 run = wandb.init(project='ml710_project', entity='arcticfox', name='model_data_parallel_2+2gpu'+'_'+'_'+datetime.now().strftime('%Y%m%d_%H%M%S'), job_type="training",reinit=True)
 
-train_dataloader = DataLoader(train_datasets, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
+train_dataloader = DataLoader(train_datasets, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True,drop_last=True)
 # test_dataloader = DataLoader(test_datasets, batch_size=BATCH_SIZE, shuffle=False, num_workers=4, pin_memory=True)
 
 
@@ -86,6 +86,8 @@ def train(model_groups, train_dataloader, optimizers, criterion, num_epochs, dev
             loss.backward()
             optimizers[0].step()
             optimizers[1].step()
+
+            this_epoch_loss += loss.item()
 
         this_epoch_loss /= len(train_dataloader)
         wandb.log({'loss': this_epoch_loss})
