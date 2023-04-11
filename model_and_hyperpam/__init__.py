@@ -34,7 +34,7 @@ model_without_ddp = SparK(
     )
 
 BATCH_SIZE = 128
-PATH_DATA = '/home/xiangjian/project'
+PATH_DATA = '/home/chong.tian/hc701'
 SEED = 42
 DEVICE = 3
 EPOCHS = 100
