@@ -48,9 +48,9 @@ GPU_IDS = ['cuda:0', 'cuda:1', 'cuda:2']
 BATCH_SIZE = BATCH_SIZE // 2 * len(GPU_IDS)
 EPOCHS = EPOCHS // 2
 
-model_1 = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=5)
-model_2 = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=5)
-model_3 = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=5)
+model_1 = timm.create_model('vit_large_patch16_224', pretrained=True, num_classes=5)
+model_2 = timm.create_model('vit_large_patch16_224', pretrained=True, num_classes=5)
+model_3 = timm.create_model('vit_large_patch16_224', pretrained=True, num_classes=5)
 
 
 wandb.login(key=WANDB_API)
