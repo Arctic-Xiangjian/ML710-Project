@@ -56,7 +56,7 @@ torch.manual_seed(SEED)
 
 BATCH_SIZE = BATCH_SIZE //2
 EPOCHS = EPOCHS // 2
-micro_batch_size = BATCH_SIZE // 4
+micro_batch_size = BATCH_SIZE // 8
 
 model_name = 'vit_large_patch16_224'
 num_classes = 5
@@ -64,7 +64,7 @@ model = timm.create_model(model_name, pretrained=True, num_classes=num_classes)
 model = ModelParallelModel(model=model)
 
 wandb.login(key=WANDB_API)
-run = wandb.init(project='ml710_project', entity='arcticfox', name='model_method_3_parallel_2gpu'+'_'+'_'+datetime.now().strftime('%Y%m%d_%H%M%S'), job_type="training",reinit=True)
+run = wandb.init(project='ml710_project', entity='arcticfox', name='pipeline_parallel_2gpu'+'_'+'_'+datetime.now().strftime('%Y%m%d_%H%M%S'), job_type="training",reinit=True)
 
 train_dataloader = DataLoader(train_datasets, batch_size=BATCH_SIZE, shuffle=True, num_workers=4, pin_memory=True)
 
