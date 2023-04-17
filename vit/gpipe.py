@@ -60,14 +60,11 @@ train_loader = DataLoader(train_datasets, batch_size=BATCH_SIZE, shuffle=True, n
 
 
 group_size = 2
-num_groups = torch.cuda.device_count() // group_size
-devices = [list(range(i*group_size, (i+1)*group_size)) for i in range(num_groups)]
 
 model = GPipe(
     model_,
-    balance=[1] * (num_groups - 1) + [0],
-    devices=devices,
-    chunks=num_groups,
+    balance=[3,3],
+    chunks=1
 )
 
 criterion = nn.CrossEntropyLoss()
